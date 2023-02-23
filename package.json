@@ -27,7 +27,7 @@
     "winston": "^3.7.2"
   },
   "scripts": {
-    "build": "babel src -d dist && ncp src/public dist/public",
+    "build": "babel src -d dist",
     "dev": "nodemon --exec node_modules/.bin/babel-node ./src/server.js",
     "dev:worker": "nodemon --exec node_modules/.bin/babel-node ./src/worker.js",
     "dev:event-processor": "nodemon --exec node_modules/.bin/babel-node ./src/event-processor.js",
@@ -54,7 +54,6 @@
     "@babel/plugin-proposal-class-static-block": "^7.18.0",
     "@babel/plugin-proposal-decorators": "^7.18.2",
     "@babel/preset-env": "^7.18.2",
-    "ncp": "^2.0.0",
     "nodemon": "^2.0.16"
   },
   "engines": {
