@@ -1,7 +1,18 @@
 import { Service } from "typedi";
 import { FLOWSCAN_URL } from "../utils/constants";
+import { getAvailableMarketplaces } from "../utils/marketplaces";
 
 const FROM_MAIL = "Flow NFT Alert <flownftalert@gmail.com>";
+
+const viewMarketplaceButtonHTML = (url, marketplaceName) => `
+<tr>
+  <td style="padding-left: 15px; padding-right: 15px;">
+    <a href="${url}" style="padding-top: 0.75rem; padding-bottom: 0.75rem; padding-left: 2.5rem; padding-right: 2.5rem; background-color: rgb(36 61 174); border-radius: 0.375rem; color: white; text-decoration: none; font-size: .875rem; line-height: 1.25rem; font-weight: bold;">View on ${marketplaceName}</a>
+    <br />
+    <br />
+  </td>
+</tr>
+`;
 
 @Service()
 export default class EmailService {
@@ -13,270 +24,225 @@ export default class EmailService {
   async sendListingAlertEmail({ email, data }) {
     try {
       const {
+        contractName,
+        contractAddress,
         name,
         description,
         thumbnailURL,
         nftID,
-        nftUUID,
         salePrice,
         currency,
         transactionID,
+        storefrontContractName,
+        storefrontContractAddress,
+        ownerAddress,
       } = data;
       const flowscanTransactionURL = `${FLOWSCAN_URL}/transaction/${transactionID}`;
+
+      const marketplaces = getAvailableMarketplaces(
+        storefrontContractName,
+        storefrontContractAddress,
+        contractName,
+        contractAddress,
+        ownerAddress,
+        nftID
+      );
+
       await this.transporter.sendMail({
         from: FROM_MAIL,
         to: email,
         subject: `Flow NFT Alert - New listing for ${name}`,
         html: `
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="width:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
-<head>
-<meta charset="UTF-8">
-<meta content="width=device-width, initial-scale=1" name="viewport">
-<meta name="x-apple-disable-message-reformatting">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta content="telephone=no" name="format-detection">
-<title>New message</title><!--[if (mso 16)]>
-<style type="text/css">
-a {text-decoration: none;}
-</style>
-<![endif]--><!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]--><!--[if gte mso 9]>
-<xml>
-<o:OfficeDocumentSettings>
-<o:AllowPNG></o:AllowPNG>
-<o:PixelsPerInch>96</o:PixelsPerInch>
-</o:OfficeDocumentSettings>
-</xml>
-<![endif]--><!--[if !mso]><!-- -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet"><!--<![endif]-->
-<style type="text/css">
-#outlook a {
-padding:0;
-}
-.ExternalClass {
-width:100%;
-}
-.ExternalClass,
-.ExternalClass p,
-.ExternalClass span,
-.ExternalClass font,
-.ExternalClass td,
-.ExternalClass div {
-line-height:100%;
-}
-.es-button {
-mso-style-priority:100!important;
-text-decoration:none!important;
-}
-a[x-apple-data-detectors] {
-color:inherit!important;
-text-decoration:none!important;
-font-size:inherit!important;
-font-family:inherit!important;
-font-weight:inherit!important;
-line-height:inherit!important;
-}
-.es-desk-hidden {
-display:none;
-float:left;
-overflow:hidden;
-width:0;
-max-height:0;
-line-height:0;
-mso-hide:all;
-}
-[data-ogsb] .es-button {
-border-width:0!important;
-padding:15px 30px 15px 30px!important;
-}
-@media only screen and (max-width:600px) {p, ul li, ol li, a { line-height:150%!important } h1, h2, h3, h1 a, h2 a, h3 a { line-height:120%!important } h1 { font-size:32px!important; text-align:left } h2 { font-size:26px!important; text-align:left } h3 { font-size:20px!important; text-align:left } h1 a { text-align:left } .es-header-body h1 a, .es-content-body h1 a, .es-footer-body h1 a { font-size:36px!important } h2 a { text-align:left } .es-header-body h2 a, .es-content-body h2 a, .es-footer-body h2 a { font-size:30px!important } h3 a { text-align:left } .es-header-body h3 a, .es-content-body h3 a, .es-footer-body h3 a { font-size:18px!important } .es-menu td a { font-size:16px!important } .es-header-body p, .es-header-body ul li, .es-header-body ol li, .es-header-body a { font-size:16px!important } .es-content-body p, .es-content-body ul li, .es-content-body ol li, .es-content-body a { font-size:16px!important } .es-footer-body p, .es-footer-body ul li, .es-footer-body ol li, .es-footer-body a { font-size:16px!important } .es-infoblock p, .es-infoblock ul li, .es-infoblock ol li, .es-infoblock a { font-size:12px!important } *[class="gmail-fix"] { display:none!important } .es-m-txt-c, .es-m-txt-c h1, .es-m-txt-c h2, .es-m-txt-c h3 { text-align:center!important } .es-m-txt-r, .es-m-txt-r h1, .es-m-txt-r h2, .es-m-txt-r h3 { text-align:right!important } .es-m-txt-l, .es-m-txt-l h1, .es-m-txt-l h2, .es-m-txt-l h3 { text-align:left!important } .es-m-txt-r img, .es-m-txt-c img, .es-m-txt-l img { display:inline!important } .es-button-border { display:inline-block!important } a.es-button, button.es-button { font-size:16px!important; display:inline-block!important; border-width:15px 30px 15px 30px!important } .es-btn-fw { border-width:10px 0px!important; text-align:center!important } .es-adaptive table, .es-btn-fw, .es-btn-fw-brdr, .es-left, .es-right { width:100%!important } .es-content table, .es-header table, .es-footer table, .es-content, .es-footer, .es-header { width:100%!important; max-width:600px!important } .es-adapt-td { display:block!important; width:100%!important } .adapt-img { width:100%!important; height:auto!important } .es-m-p0 { padding:0px!important } .es-m-p0r { padding-right:0px!important } .es-m-p0l { padding-left:0px!important } .es-m-p0t { padding-top:0px!important } .es-m-p0b { padding-bottom:0!important } .es-m-p20b { padding-bottom:20px!important } .es-mobile-hidden, .es-hidden { display:none!important } tr.es-desk-hidden, td.es-desk-hidden, table.es-desk-hidden { width:auto!important; overflow:visible!important; float:none!important; max-height:inherit!important; line-height:inherit!important } tr.es-desk-hidden { display:table-row!important } table.es-desk-hidden { display:table!important } td.es-desk-menu-hidden { display:table-cell!important } .es-menu td { width:1%!important } table.es-table-not-adapt, .esd-block-html table { width:auto!important } table.es-social { display:inline-block!important } table.es-social td { display:inline-block!important } .es-desk-hidden { display:table-row!important; width:auto!important; overflow:visible!important; max-height:inherit!important } }
-</style>
-</head>
-<body style="width:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;padding:0;Margin:0">
-<div class="es-wrapper-color" style="background-color:#EEEEEE"><!--[if gte mso 9]>
-<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-<v:fill type="tile" color="#eeeeee"></v:fill>
-</v:background>
-<![endif]-->
-<table class="es-wrapper" width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;Margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top;background-color:#EEEEEE">
-<tr style="border-collapse:collapse">
-<td valign="top" style="padding:0;Margin:0">
-<table cellpadding="0" cellspacing="0" class="es-content" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-content-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px" cellspacing="0" cellpadding="0" align="center">
-<tr style="border-collapse:collapse">
-<td align="left" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:15px"><!--[if mso]><table style="width:580px" cellpadding="0" cellspacing="0"><tr><td style="width:282px" valign="top"><![endif]-->
-<table class="es-left" cellspacing="0" cellpadding="0" align="left" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;float:left">
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;width:282px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td class="es-infoblock es-m-txt-c" align="left" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica\ neue', helvetica, sans-serif;line-height:14px;color:#CCCCCC;font-size:12px">Put your preheader text here<br></p></td>
-</tr>
-</table></td>
-</tr>
-</table><!--[if mso]></td><td style="width:20px"></td><td style="width:278px" valign="top"><![endif]-->
-<table class="es-right" cellspacing="0" cellpadding="0" align="right" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;float:right">
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;width:278px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td align="right" class="es-infoblock es-m-txt-c" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:14px;color:#CCCCCC;font-size:12px"><a href="https://viewstripo.email" class="view" target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#CCCCCC;font-size:12px;font-family:arial, 'helvetica neue', helvetica, sans-serif">View in browser</a></p></td>
-</tr>
-</table></td>
-</tr>
-</table><!--[if mso]></td></tr></table><![endif]--></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse"></tr>
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-header-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#044767;width:600px" cellspacing="0" cellpadding="0" bgcolor="#044767" align="center">
-<tr style="border-collapse:collapse">
-<td align="left" style="Margin:0;padding-top:35px;padding-left:35px;padding-right:35px;padding-bottom:40px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:530px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td class="es-m-txt-c" align="center" style="padding:0;Margin:0"><h1 style="Margin:0;line-height:30px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:30px;font-style:normal;font-weight:bold;color:#ffffff"><strong>Flow NFT Alert</strong></h1></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-content-body" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px">
-<tr style="border-collapse:collapse">
-<td align="left" style="Margin:0;padding-bottom:25px;padding-top:35px;padding-left:35px;padding-right:35px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:530px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-bottom:5px;padding-top:20px"><h3 style="Margin:0;line-height:22px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:18px;font-style:normal;font-weight:bold;color:#333333">A new listing has been posted!</h3></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;font-size:14px"><b>Name:</b>&nbsp;${name}</p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:20px;color:#777777;font-size:13px"><b>NFT ID:</b>&nbsp;${nftID}</p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:20px;color:#777777;font-size:13px"><b>NFT UUID:</b>&nbsp;${nftUUID}</p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-top:5px;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;font-size:14px"><strong>Description:</strong></p><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;font-size:14px">${description}</p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-top:5px;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;font-size:14px"><strong>Price:&nbsp;</strong>${salePrice}&nbsp;<strong>${currency}</strong></p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-top:5px;padding-bottom:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#777777;font-size:14px"><strong>Transaction: </strong><a href="${flowscanTransactionURL}" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#ED8E20;font-size:15px">${flowscanTransactionURL}</a></p></td>
-</tr>
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-bottom:10px;padding-top:15px"><img src="${thumbnailURL}" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-content-body" cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px">
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0;padding-top:15px;padding-left:35px;padding-right:35px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:530px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0;font-size:0"><img src="https://meoqbn.stripocdn.email/content/guids/CABINET_75694a6fc3c4633b3ee8e3c750851c02/images/18501522065897895.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="46"></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table cellpadding="0" cellspacing="0" class="es-content" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-content-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#1b9ba3;width:600px;border-bottom:10px solid #48afb5" cellspacing="0" cellpadding="0" bgcolor="#1b9ba3" align="center">
-<tr style="border-collapse:collapse">
-<td align="left" style="padding:0;Margin:0">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:600px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0;display:none"></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table cellpadding="0" cellspacing="0" class="es-footer" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-footer-body" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;width:600px">
-<tr style="border-collapse:collapse">
-<td align="left" style="Margin:0;padding-top:35px;padding-left:35px;padding-right:35px;padding-bottom:40px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:530px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td esdev-links-color="#777777" align="left" class="es-m-txt-c" style="padding:0;Margin:0;padding-bottom:5px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:18px;color:#777777;font-size:12px">You are receiving this email as you have submitted your email address to Flow NFT Alert and requested to be notified. If you do not wish to receive&nbsp;emails from Flow NFT Alert, please reply to this email to be unsubscribed.</p></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-<table class="es-content" cellspacing="0" cellpadding="0" align="center" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-<tr style="border-collapse:collapse">
-<td align="center" style="padding:0;Margin:0">
-<table class="es-content-body" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px" cellspacing="0" cellpadding="0" align="center">
-<tr style="border-collapse:collapse">
-<td align="left" style="Margin:0;padding-left:20px;padding-right:20px;padding-top:30px;padding-bottom:30px">
-<table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td valign="top" align="center" style="padding:0;Margin:0;width:560px">
-<table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-<tr style="border-collapse:collapse">
-<td class="es-infoblock made_with" align="center" style="padding:0;Margin:0;line-height:120%;font-size:0;color:#CCCCCC"><a target="_blank" href="https://viewstripo.email/?utm_source=templates&utm_medium=email&utm_campaign=accessory&utm_content=trigger_newsletter4" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#CCCCCC;font-size:12px"><img src="https://meoqbn.stripocdn.email/content/guids/CABINET_9df86e5b6c53dd0319931e2447ed854b/images/64951510234941531.png" alt width="125" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"></a></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table></td>
-</tr>
-</table>
-</div>
-</body>
+        <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="telephone=no" name="format-detection">
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,400i,700,700i" rel="stylesheet">
+  </head>
+  <body style="width:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;font-family:'Inter', 'helvetica neue', helvetica, arial, sans-serif;padding:0;Margin:0">
+    <div>
+      <table cellpadding="0" cellspacing="0" class="es-wrapper" style="background-color:#333755; background-position:center top; background-repeat:repeat; border-collapse:collapse; border-spacing:0px; height:100%; margin:0px; padding:0px; width:100%">
+        <tbody>
+          <tr>
+            <td style="vertical-align:top">
+              <table align="center" cellpadding="0" cellspacing="0" class="es-content" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; table-layout:fixed !important; width:100%">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table align="center" cellpadding="0" cellspacing="0" class="es-content-body" style="background-color:transparent; border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:600px">
+                        <tbody>
+                          <tr>
+                            <td>&nbsp; <table align="right" cellpadding="0" cellspacing="0" class="es-right" style="border-collapse:collapse; border-spacing:0px; float:right; mso-table-lspace:0pt; mso-table-rspace:0pt">
+                                <tbody></tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table align="center" cellpadding="0" cellspacing="0" class="es-content" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; table-layout:fixed !important; width:100%">
+                <tbody>
+                  <tr></tr>
+                  <tr>
+                    <td>
+                      <table align="center" cellpadding="0" cellspacing="0" class="es-header-body" style="background-color:#171447; border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:600px">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:100%">
+                                <tbody>
+                                  <tr>
+                                    <td style="vertical-align:top; width:530px">
+                                      <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:100%">
+                                        <tbody>
+                                          <tr>
+                                            <td>
+                                              <h1 style="margin-left:0px; margin-right:0px; text-align:center">
+                                                <span style="font-size:20px">
+                                                  <strong>
+                                                    <span style="color:#ffffff">A new listing has been posted!</span>
+                                                  </strong>
+                                                </span>
+                                                <br />
+                                                <img alt="Flow NFT Alert" src="https://flow-nft-alert.vercel.app/_next/image?url=%2Fflow-nft-alert-logo.png&amp;w=384&amp;q=75" style="height:60px; margin-top:15px; width:60px" />
+                                              </h1>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table align="center" cellpadding="0" cellspacing="0" class="es-content" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; table-layout:fixed !important; width:100%">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table align="center" cellpadding="0" cellspacing="0" class="es-content-body" style="background-color:#ffffff; border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:600px">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:100%; background-color: #060B27; color: #fff">
+                                <tbody>
+                                  <tr>
+                                    <td style="vertical-align:top; width:530px">
+                                      <table cellpadding="5" cellspacing="0" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:100%;">
+                                        <tbody>
+                                          <tr>
+                                            <td style="padding-left: 15px; padding-right: 15px;">
+                                              <p>
+                                                <strong>Name:</strong>&nbsp;${name}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding-left: 15px; padding-right: 15px;">
+                                              <p>
+                                                <strong>NFT ID:</strong>&nbsp;${nftID}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding-left: 15px; padding-right: 15px;">
+                                              <p>
+                                                <strong>Description:</strong>
+                                                <br /> ${description}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding-left: 15px; padding-right: 15px;">
+                                              <p>
+                                                <strong>Price:&nbsp;</strong>${salePrice}&nbsp;${currency}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding-left: 15px; padding-right: 15px;">
+                                              <p>
+                                                <strong>Transaction: </strong>
+                                                <a href="${flowscanTransactionURL}" style="text-size-adjust: none; text-decoration-line: none; color: rgb(237, 142, 32); font-size: 15px;">${flowscanTransactionURL}</a>
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td style="padding-left: 20px; padding-right: 20px; padding-bottom: 15px;">
+                                              <img src="${thumbnailURL}" style="border:0px; display:block; outline:none; margin-bottom: 10px" />
+                                            </td>
+                                          </tr>
+                                          ${marketplaces.map((marketplace) =>
+                                            viewMarketplaceButtonHTML(
+                                              marketplace.url,
+                                              marketplace.name
+                                            )
+                                          )}
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table align="center" cellpadding="0" cellspacing="0" class="es-content" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; table-layout:fixed !important; width:100%">
+                <tbody>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table align="center" cellpadding="0" cellspacing="0" class="es-footer" style="background-position:center top; background-repeat:repeat; border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; table-layout:fixed !important; width:100%">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table align="center" cellpadding="0" cellspacing="0" class="es-footer-body" style="background-color:#ffffff; border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:600px">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; border-spacing:0px; mso-table-lspace:0pt; mso-table-rspace:0pt; width:100%; background-color:#333755; color: #bbb; font-size: 12px;">
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      <p style="margin-left:0; margin-right:0">You are receiving this email because&nbsp;you have submitted your email address to Flow NFT Alert. If you do not wish to receive&nbsp;emails from Flow NFT Alert, please reply to this email to be unsubscribed.</p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
 </html>
         `,
       });
