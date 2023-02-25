@@ -181,14 +181,6 @@ export const getV2ListingMetadata = async (contractName, userAddress, nftID, lis
         fcl.arg(listingResourceID.toString(), t.UInt64),
       ]),
     ]);
-    console.log(
-      "Successfully fetched V2 Listing Metadata [" +
-        contractName +
-        "] NFT ID: " +
-        nftID +
-        ", listingResourceID: " +
-        listingResourceID
-    );
     return await fcl.decode(script);
   } catch (err) {
     console.log(
@@ -199,6 +191,7 @@ export const getV2ListingMetadata = async (contractName, userAddress, nftID, lis
         ", listingResourceID: " +
         listingResourceID
     );
+    console.log(err);
   }
   return null;
 };

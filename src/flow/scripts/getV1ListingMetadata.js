@@ -170,6 +170,7 @@ export const getV1ListingMetadata = async (contractName, userAddress, nftID, lis
         ", listingResourceID: " +
         listingResourceID
     );
+    console.log(err);
   }
   return null;
 };
