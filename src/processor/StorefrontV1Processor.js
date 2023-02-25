@@ -1,20 +1,19 @@
 import { Service } from "typedi";
-import { getV2ListingMetadata } from "../flow/scripts/getV2ListingMetadata";
+import { getV1ListingMetadata } from "../flow/scripts/getV1ListingMetadata";
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
-import { STOREFRONT_V2_CONTRACT_NAME } from "../utils/constants";
+import { STOREFRONT_V1_ADDRESS, STOREFRONT_V1_CONTRACT_NAME } from "../utils/constants";
 import { getContractInfoFromType } from "../utils/flowEvents";
 import {
   filterAlertsByEvent,
   formatAsLongUTCDate,
   parseCurrencyFromSalePaymentVaultType,
   parseIPFSURL,
-  shouldProcessStorefrontEvent,
 } from "../utils/utils";
 
 @Service()
-export default class StorefrontProcessor {
+export default class StorefrontV1Processor {
   constructor(container) {
     this.logger = container.get("logger");
     this.alertService = container.get(AlertService);
@@ -24,15 +23,13 @@ export default class StorefrontProcessor {
 
   async processListingEvent(transactionID, event, alerts) {
     const { contractAddress, contractName } = getContractInfoFromType(event.nftType);
-    const matchingAlerts = shouldProcessStorefrontEvent(contractName)
-      ? filterAlertsByEvent(alerts, contractName, contractAddress, event)
-      : [];
+    const matchingAlerts = filterAlertsByEvent(alerts, contractName, contractAddress, event);
     if (matchingAlerts.length > 0) {
       this.logger.info(
-        `<${STOREFRONT_V2_CONTRACT_NAME}> Processing ListingAvailable event for ${contractName}, NFT ID ${event.nftID}...`
+        `<${STOREFRONT_V1_CONTRACT_NAME}> Processing ListingAvailable event for ${contractName}, NFT ID ${event.nftID}...`
       );
       try {
-        const listingMetadata = await getV2ListingMetadata(
+        const listingMetadata = await getV1ListingMetadata(
           contractName,
           event.storefrontAddress,
           event.nftID,
@@ -52,15 +49,18 @@ export default class StorefrontProcessor {
             email: alert.email,
             data: {
               contractName,
+              contractAddress,
               name: listingMetadata.nft.name,
               description: listingMetadata.nft.description,
               thumbnailURL: parseIPFSURL(listingMetadata.nft.thumbnailURL),
               nftID: event.nftID,
-              nftUUID: event.nftUUID,
               createdAt: currentDateTime,
-              salePrice: event.salePrice,
-              currency: parseCurrencyFromSalePaymentVaultType(event.salePaymentVaultType),
+              salePrice: event.price,
+              currency: parseCurrencyFromSalePaymentVaultType(event.ftVaultType),
               transactionID,
+              storefrontContractName: STOREFRONT_V1_CONTRACT_NAME,
+              storefrontContractAddress: STOREFRONT_V1_ADDRESS,
+              ownerAddress: event.storefrontAddress,
             },
           });
 
