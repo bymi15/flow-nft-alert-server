@@ -3,10 +3,21 @@ import { Service } from "typedi";
 import config from "../config";
 import AlertService from "../services/AlertService";
 import BlockService from "../services/BlockService";
-import { STOREFRONT_V2_CONTRACT_NAME } from "../utils/constants";
+import {
+  STOREFRONT_V1_ADDRESS,
+  STOREFRONT_V1_CONTRACT_NAME,
+  STOREFRONT_V2_ADDRESS,
+  STOREFRONT_V2_CONTRACT_NAME,
+  STOREFRONT_V2_FLOWTY_ADDRESS,
+  TOPSHOT_MARKETPLACE_ADDRESS,
+  TOPSHOT_MARKETPLACE_CONTRACT_NAME,
+} from "../utils/constants";
 import { getLatestBlockHeight, queryEvents, transformEventToObject } from "../utils/flowEvents";
-import { sleep } from "../utils/utils";
-import StorefrontProcessor from "./StorefrontProcessor";
+import { getEventTypes } from "./eventTypes";
+import StorefrontV1Processor from "./StorefrontV1Processor";
+import StorefrontV2FlowtyProcessor from "./StorefrontV2FlowtyProcessor";
+import StorefrontV2Processor from "./StorefrontV2Processor";
+import TopshotProcessor from "./TopshotProcessor";
 
 @Service()
 export default class Processor {
@@ -15,7 +26,15 @@ export default class Processor {
     this.blockService = container.get(BlockService);
     this.alertService = container.get(AlertService);
     this.processor = {
-      [STOREFRONT_V2_CONTRACT_NAME]: container.get(StorefrontProcessor),
+      [`${STOREFRONT_V2_CONTRACT_NAME}.${STOREFRONT_V2_ADDRESS}`]:
+        container.get(StorefrontV2Processor),
+      [`${STOREFRONT_V2_CONTRACT_NAME}.${STOREFRONT_V2_FLOWTY_ADDRESS}`]: container.get(
+        StorefrontV2FlowtyProcessor
+      ),
+      [`${STOREFRONT_V1_CONTRACT_NAME}.${STOREFRONT_V1_ADDRESS}`]:
+        container.get(StorefrontV1Processor),
+      [`${TOPSHOT_MARKETPLACE_CONTRACT_NAME}.${TOPSHOT_MARKETPLACE_ADDRESS}`]:
+        container.get(TopshotProcessor),
     };
   }
 
@@ -36,7 +55,7 @@ export default class Processor {
             latestBlockHeight
           );
           while (start < maxBlockHeight) {
-            const eventTypes = ["ListingAvailable"];
+            const eventTypes = getEventTypes(block.contractName);
             const liveAlerts = await this.alertService.getLiveAlerts();
             for (let eventType of eventTypes) {
               let rawEvents = [];
@@ -53,7 +72,7 @@ export default class Processor {
 
               for (let rawEvent of rawEvents) {
                 const processedEvent = transformEventToObject(rawEvent);
-                let processor = this.processor[block.contractName];
+                let processor = this.processor[`${block.contractName}.${block.contractAddress}`];
                 if (processor) {
                   await processor.processListingEvent(
                     rawEvent.transactionId,
