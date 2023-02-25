@@ -4,7 +4,12 @@ export const NEW_LISTING_ALERT_TYPE = "NEW_LISTING";
 export const FLOOR_PRICE_ALERT_TYPE = "FLOOR_PRICE";
 
 export const STOREFRONT_V1_CONTRACT_NAME = "NFTStorefront";
+export const STOREFRONT_V1_ADDRESS = "0x4eb8a10cb9f87357";
 export const STOREFRONT_V2_CONTRACT_NAME = "NFTStorefrontV2";
+export const STOREFRONT_V2_ADDRESS = "0x4eb8a10cb9f87357";
+export const STOREFRONT_V2_FLOWTY_ADDRESS = "0x3cdbb3d569211ff3";
+export const TOPSHOT_MARKETPLACE_CONTRACT_NAME = "TopShotMarketV3";
+export const TOPSHOT_MARKETPLACE_ADDRESS = "0xc1e4f4f4c4257510";
 
 export const FLOWSCAN_URL =
   config.FCL_ENVIRONMENT === "testnet" ? "https://testnet.flowscan.org" : "https://flowscan.org";
