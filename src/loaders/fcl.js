@@ -13,6 +13,7 @@ export default (env) => {
         .put("0xNonFungibleToken", "0x631e88ae7f1d7c20")
         .put("0xMetadataViews", "0x631e88ae7f1d7c20")
         .put("0xNFTStorefrontV2", "0x2d55b98eb200daef")
+        .put("0xNFTStorefrontV2Flowty", "0x2d55b98eb200daef")
         .put("0xNFTCatalog", "0x324c34e1c517e4db")
         .put("0xNFTRetrieval", "0x324c34e1c517e4db");
       break;
@@ -27,6 +28,7 @@ export default (env) => {
         .put("0xNonFungibleToken", "0x1d7e57aa55817448")
         .put("0xMetadataViews", "0x1d7e57aa55817448")
         .put("0xNFTStorefrontV2", "0x4eb8a10cb9f87357")
+        .put("0xNFTStorefrontV2Flowty", "0x3cdbb3d569211ff3")
         .put("0xNFTCatalog", "0x49a7cda3a1eecc29")
         .put("0xNFTRetrieval", "0x49a7cda3a1eecc29");
       break;
