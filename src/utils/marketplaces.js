@@ -45,6 +45,7 @@ export const getAvailableMarketplaces = (
         name: "Flowty",
         url: `https://www.flowty.io/asset/${contractAddress}/${contractName}/${nftID}`,
       });
+      break;
     case "NFTStorefront.0x4eb8a10cb9f87357":
       marketplaces.push({
         name: "Matrix Market",
@@ -52,6 +53,7 @@ export const getAvailableMarketplaces = (
           2
         )}.${contractName}/${nftID}`,
       });
+      break;
     case "TopShotMarketV3.0xc1e4f4f4c4257510":
       marketplaces.push({
         name: "NBA Top Shot",
