@@ -7,6 +7,8 @@ const AlertSchema = new mongoose.Schema(
     email: { type: String, required: true },
     alertType: { type: String, required: true },
     nftID: Number,
+    serialNumber: Number,
+    name: String,
     floorPrice: Number,
     currency: String,
     expiry: Number,

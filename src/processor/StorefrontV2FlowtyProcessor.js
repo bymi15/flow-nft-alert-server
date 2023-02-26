@@ -3,10 +3,10 @@ import { getV2FlowtyListingMetadata } from "../flow/scripts/getV2FlowtyListingMe
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
+import { filterAlertsByEvent } from "../utils/alertUtils";
 import { STOREFRONT_V2_CONTRACT_NAME, STOREFRONT_V2_FLOWTY_ADDRESS } from "../utils/constants";
 import { getContractInfoFromType } from "../utils/flowEvents";
 import {
-  filterAlertsByEvent,
   formatAsLongUTCDate,
   parseCurrencyFromSalePaymentVaultType,
   parseIPFSURL,

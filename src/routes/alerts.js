@@ -21,6 +21,8 @@ alertRoutes.post(
       email: Joi.string(),
       alertType: Joi.string(),
       nftID: Joi.number().integer().min(0).empty(""),
+      serialNumber: Joi.number().integer().min(0).empty(""),
+      name: Joi.string().empty(""),
       floorPrice: Joi.number().min(0),
       currency: Joi.string(),
       expiry: Joi.number().empty(""),

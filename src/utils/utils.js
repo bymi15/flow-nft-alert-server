@@ -1,8 +1,6 @@
 import moment from "moment";
 import {
-  FLOOR_PRICE_ALERT_TYPE,
   IPFS_GATEWAY,
-  NEW_LISTING_ALERT_TYPE,
   SALE_PAYMENT_VAULT_TYPE_DUC,
   SALE_PAYMENT_VAULT_TYPE_FLOW,
   SALE_PAYMENT_VAULT_TYPE_FUSD,
@@ -11,38 +9,10 @@ import {
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const filterAlertsByEvent = (
-  alerts,
-  contractName,
-  contractAddress,
-  nftID,
-  price,
-  currency
-) => {
-  return alerts
-    ? alerts.filter((alert) => {
-        if (alert.contractName === contractName && alert.contractAddress === contractAddress) {
-          if (alert.alertType === NEW_LISTING_ALERT_TYPE) {
-            return alert.nftID !== undefined ? nftID === alert.nftID : true;
-          } else if (alert.alertType === FLOOR_PRICE_ALERT_TYPE) {
-            return (
-              (alert.nftID === undefined || nftID === alert.nftID) &&
-              parseFloat(price) <= parseFloat(alert.floorPrice) &&
-              currency === alert.currency
-            );
-          }
-        }
-      })
-    : [];
-};
-
 export const shouldProcessStorefrontEvent = (contractName) =>
   ["FlowversePass", "FlowverseTreasures", "FlowverseSocks", "Wearables", "SturdyItems"].includes(
     contractName
   );
-
-export const shouldProcessStorefrontV1Event = (contractName) =>
-  ["FlowverseSocks"].includes(contractName);
 
 export const formatAsLongUTCDate = (dateTime) =>
   moment(dateTime).utc().format("ddd MMM D YYYY, HH:mm:ss") + " UTC/GMT";

@@ -3,8 +3,9 @@ import { getTopshotMetadata } from "../flow/scripts/getTopshotMetadata";
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
+import { filterAlertsByEvent } from "../utils/alertUtils";
 import { TOPSHOT_MARKETPLACE_ADDRESS, TOPSHOT_MARKETPLACE_CONTRACT_NAME } from "../utils/constants";
-import { filterAlertsByEvent, formatAsLongUTCDate, parseIPFSURL } from "../utils/utils";
+import { formatAsLongUTCDate, parseIPFSURL } from "../utils/utils";
 
 const contractName = "TopShot";
 const contractAddress = "0x0b2a3299cc857e29";
@@ -44,6 +45,8 @@ export default class TopshotProcessor {
           );
           return;
         }
+
+        // Further processing of alerts
 
         // Send email notification
         const currentDateTime = formatAsLongUTCDate();

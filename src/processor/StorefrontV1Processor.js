@@ -3,10 +3,10 @@ import { getV1ListingMetadata } from "../flow/scripts/getV1ListingMetadata";
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
+import { filterAlertsByEvent } from "../utils/alertUtils";
 import { STOREFRONT_V1_ADDRESS, STOREFRONT_V1_CONTRACT_NAME } from "../utils/constants";
 import { getContractInfoFromType } from "../utils/flowEvents";
 import {
-  filterAlertsByEvent,
   formatAsLongUTCDate,
   parseCurrencyFromSalePaymentVaultType,
   parseIPFSURL,
