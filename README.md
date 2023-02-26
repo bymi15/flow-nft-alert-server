@@ -1,4 +1,4 @@
-# flow-nft-alert-server
+# Flow NFT Alert Server
 
 The backend that powers Flow NFT Alert
 
