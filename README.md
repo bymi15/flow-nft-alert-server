@@ -2,11 +2,17 @@
 
 The backend that powers Flow NFT Alert
 
+## Tech Stack
+
+- NodeJS
+- Cadence
+- MongoDB
+
 ## Deployments
 
-- API: https://flow-nft-alert-api.cyclic.app
+- API: https://flow-nft-alert-api.cyclic.app (serverless)
 - Event Processor: https://railway.app
-- Worker (Email Job Processor): not deployed yet
+- Worker (Email Job Processor): https://railway.app
 
 ## Email Service
 
