@@ -13,6 +13,7 @@ import {
   TOPSHOT_MARKETPLACE_CONTRACT_NAME,
 } from "../utils/constants";
 import { getLatestBlockHeight, queryEvents, transformEventToObject } from "../utils/flowEvents";
+import { sleep } from "../utils/utils";
 import { getEventTypes } from "./eventTypes";
 import StorefrontV1Processor from "./StorefrontV1Processor";
 import StorefrontV2FlowtyProcessor from "./StorefrontV2FlowtyProcessor";
@@ -72,7 +73,7 @@ export default class Processor {
 
               for (let rawEvent of rawEvents) {
                 const processedEvent = transformEventToObject(rawEvent);
-                let processor = this.processor[`${block.contractName}.${block.contractAddress}`];
+                let processor = this.processor[`${block.contractName}.0x${block.contractAddress}`];
                 if (processor) {
                   await processor.processListingEvent(
                     rawEvent.transactionId,
