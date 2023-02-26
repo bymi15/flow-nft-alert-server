@@ -48,7 +48,7 @@ export const getAvailableMarketplaces = (
     case "NFTStorefront.0x4eb8a10cb9f87357":
       marketplaces.push({
         name: "Matrix Market",
-        url: `https://matrixmarket.xyz/collection/mainnet_flow-A.${ownerAddress.substring(
+        url: `https://matrixmarket.xyz/collection/mainnet_flow-A.${contractAddress.substring(
           2
         )}.${contractName}/${nftID}`,
       });
