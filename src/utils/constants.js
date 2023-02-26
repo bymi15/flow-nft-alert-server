@@ -1,7 +1,8 @@
 import config from "../config";
 
 export const NEW_LISTING_ALERT_TYPE = "NEW_LISTING";
-export const FLOOR_PRICE_ALERT_TYPE = "FLOOR_PRICE";
+export const PRICE_BELOW_ALERT_TYPE = "PRICE_BELOW";
+export const PRICE_ABOVE_ALERT_TYPE = "PRICE_ABOVE";
 
 export const STOREFRONT_V1_CONTRACT_NAME = "NFTStorefront";
 export const STOREFRONT_V1_ADDRESS = "0x4eb8a10cb9f87357";

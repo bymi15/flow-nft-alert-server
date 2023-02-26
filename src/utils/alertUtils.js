@@ -1,4 +1,7 @@
 // First phase of filtering
+
+import { PRICE_ABOVE_ALERT_TYPE, PRICE_BELOW_ALERT_TYPE } from "./constants";
+
 // Filter alerts by event
 export const filterAlertsByEvent = (
   alerts,
@@ -13,10 +16,16 @@ export const filterAlertsByEvent = (
         if (alert.contractName === contractName && alert.contractAddress === contractAddress) {
           if (alert.alertType === NEW_LISTING_ALERT_TYPE) {
             return alert.nftID !== undefined ? nftID === alert.nftID : true;
-          } else if (alert.alertType === FLOOR_PRICE_ALERT_TYPE) {
+          } else if (alert.alertType === PRICE_BELOW_ALERT_TYPE) {
             return (
               (alert.nftID === undefined || nftID === alert.nftID) &&
               parseFloat(price) <= parseFloat(alert.price) &&
+              currency === alert.currency
+            );
+          } else if (alert.alertType === PRICE_ABOVE_ALERT_TYPE) {
+            return (
+              (alert.nftID === undefined || nftID === alert.nftID) &&
+              parseFloat(price) > parseFloat(alert.price) &&
               currency === alert.currency
             );
           }
