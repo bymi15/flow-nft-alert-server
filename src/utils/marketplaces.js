@@ -33,7 +33,7 @@ export const getAvailableMarketplaces = (
       if (FLOWVERSE_NFT_SUPPORTED_CONTRACTS.includes(contractName)) {
         marketplaces.push({
           name: "Flowverse NFT",
-          url: `https://nft.flowverse.co/${mapFlowverseNFTContractNameToSlugName(
+          url: `https://nft.flowverse.co/collections/${mapFlowverseNFTContractNameToSlugName(
             contractName
           )}/${ownerAddress}/${nftID}`,
         });
