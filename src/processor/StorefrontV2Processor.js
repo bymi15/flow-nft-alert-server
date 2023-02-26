@@ -53,6 +53,7 @@ export default class StorefrontV2Processor {
         }
 
         // Send email notification
+        let sentAlerts = 0;
         const currentDateTime = formatAsLongUTCDate();
         for (let alert of matchingAlerts) {
           // Further processing of alerts
@@ -78,6 +79,8 @@ export default class StorefrontV2Processor {
             },
           });
 
+          sentAlerts++;
+
           // De-activate alert if it's a one-time alert
           if (alert.expiry === undefined) {
             await this.alertService.update({ _id: alert._id }, { active: false });
@@ -85,22 +88,23 @@ export default class StorefrontV2Processor {
         }
 
         // Update metrics
-        const sentAlerts = matchingAlerts.length;
-        const activeAlerts = await this.alertService.getActiveAlertCount({
-          contractName,
-          contractAddress,
-        });
-        const activeUniqueUsers = await this.alertService.getActiveUserCount({
-          contractName,
-          contractAddress,
-        });
-        await this.metricService.updateMetrics({
-          contractName,
-          contractAddress,
-          sentAlerts,
-          activeAlerts,
-          activeUniqueUsers,
-        });
+        if (sentAlerts > 0) {
+          const activeAlerts = await this.alertService.getActiveAlertCount({
+            contractName,
+            contractAddress,
+          });
+          const activeUniqueUsers = await this.alertService.getActiveUserCount({
+            contractName,
+            contractAddress,
+          });
+          await this.metricService.updateMetrics({
+            contractName,
+            contractAddress,
+            sentAlerts,
+            activeAlerts,
+            activeUniqueUsers,
+          });
+        }
       } catch (err) {
         this.logger.error(
           `Error while processing ListingAvailable event... (tx id: ${transactionID})`
