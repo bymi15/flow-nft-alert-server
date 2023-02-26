@@ -11,17 +11,24 @@ import {
 
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const filterAlertsByEvent = (alerts, contractName, contractAddress, event) => {
+export const filterAlertsByEvent = (
+  alerts,
+  contractName,
+  contractAddress,
+  nftID,
+  price,
+  currency
+) => {
   return alerts
     ? alerts.filter((alert) => {
         if (alert.contractName === contractName && alert.contractAddress === contractAddress) {
           if (alert.alertType === NEW_LISTING_ALERT_TYPE) {
-            return Object.keys(alert).includes("nftID") ? event.nftID === alert.nftID : true;
+            return alert.nftID !== undefined ? nftID === alert.nftID : true;
           } else if (alert.alertType === FLOOR_PRICE_ALERT_TYPE) {
             return (
-              (!Object.keys(alert).includes("nftID") || event.nftID === alert.nftID) &&
-              parseFloat(event.salePrice) <= parseFloat(alert.floorPrice) &&
-              parseCurrencyFromSalePaymentVaultType(event.salePaymentVaultType) === alert.currency
+              (alert.nftID === undefined || nftID === alert.nftID) &&
+              parseFloat(price) <= parseFloat(alert.floorPrice) &&
+              currency === alert.currency
             );
           }
         }

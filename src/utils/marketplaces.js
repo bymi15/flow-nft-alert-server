@@ -53,7 +53,10 @@ export const getAvailableMarketplaces = (
         )}.${contractName}/${nftID}`,
       });
     case "TopShotMarketV3.0xc1e4f4f4c4257510":
-      marketplaces.push({ name: "NBA Top Shot", url: "" });
+      marketplaces.push({
+        name: "NBA Top Shot",
+        url: "https://nbatopshot.com/search?orderBy=UPDATED_AT_DESC",
+      });
       break;
   }
   return marketplaces;
