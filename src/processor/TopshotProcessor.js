@@ -3,13 +3,8 @@ import { getTopshotMetadata } from "../flow/scripts/getTopshotMetadata";
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
-import { TOPSHOT_MARKETPLACE_CONTRACT_NAME } from "../utils/constants";
-import {
-  filterAlertsByEvent,
-  formatAsLongUTCDate,
-  parseIPFSURL,
-  shouldProcessStorefrontEvent,
-} from "../utils/utils";
+import { TOPSHOT_MARKETPLACE_ADDRESS, TOPSHOT_MARKETPLACE_CONTRACT_NAME } from "../utils/constants";
+import { filterAlertsByEvent, formatAsLongUTCDate, parseIPFSURL } from "../utils/utils";
 
 const contractName = "TopShot";
 const contractAddress = "0x0b2a3299cc857e29";
@@ -29,9 +24,14 @@ export default class TopshotProcessor {
         `Skipping TopShot listing event as seller is empty... (tx id: ${transactionID})`
       );
     }
-    const matchingAlerts = shouldProcessStorefrontEvent(contractName)
-      ? filterAlertsByEvent(alerts, contractName, contractAddress, event)
-      : [];
+    const matchingAlerts = filterAlertsByEvent(
+      alerts,
+      contractName,
+      contractAddress,
+      event.id,
+      event.price,
+      "USD"
+    );
     if (matchingAlerts.length > 0) {
       this.logger.info(
         `<${TOPSHOT_MARKETPLACE_CONTRACT_NAME}> Processing ListingAvailable event for ${contractName}, NFT ID ${event.id}...`
@@ -52,19 +52,23 @@ export default class TopshotProcessor {
             email: alert.email,
             data: {
               contractName,
+              contractAddress,
               name: nftMetadata.name,
               description: nftMetadata.description,
-              thumbnailURL: parseIPFSURL(nftMetadata.thumbnailURL),
+              thumbnailURL: parseIPFSURL(nftMetadata.thumbnail),
               nftID: event.id,
               createdAt: currentDateTime,
               salePrice: event.price,
               currency: "USD",
               transactionID,
+              storefrontContractName: TOPSHOT_MARKETPLACE_CONTRACT_NAME,
+              storefrontContractAddress: TOPSHOT_MARKETPLACE_ADDRESS,
+              ownerAddress: event.seller,
             },
           });
 
           // De-activate alert if it's a one-time alert
-          if (!Object.keys(alert).includes("expiry")) {
+          if (alert.expiry === undefined) {
             await this.alertService.update({ _id: alert._id }, { active: false });
           }
         }

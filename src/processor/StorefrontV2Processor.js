@@ -25,7 +25,14 @@ export default class StorefrontV2Processor {
   async processListingEvent(transactionID, event, alerts) {
     const { contractAddress, contractName } = getContractInfoFromType(event.nftType);
     const matchingAlerts = shouldProcessStorefrontEvent(contractName)
-      ? filterAlertsByEvent(alerts, contractName, contractAddress, event)
+      ? filterAlertsByEvent(
+          alerts,
+          contractName,
+          contractAddress,
+          event.nftID,
+          event.salePrice,
+          parseCurrencyFromSalePaymentVaultType(event.salePaymentVaultType)
+        )
       : [];
     if (matchingAlerts.length > 0) {
       this.logger.info(
@@ -55,7 +62,7 @@ export default class StorefrontV2Processor {
               contractAddress,
               name: listingMetadata.nft.name,
               description: listingMetadata.nft.description,
-              thumbnailURL: parseIPFSURL(listingMetadata.nft.thumbnailURL),
+              thumbnailURL: parseIPFSURL(listingMetadata.nft.thumbnail),
               nftID: event.nftID,
               createdAt: currentDateTime,
               salePrice: event.salePrice,
@@ -68,7 +75,7 @@ export default class StorefrontV2Processor {
           });
 
           // De-activate alert if it's a one-time alert
-          if (!Object.keys(alert).includes("expiry")) {
+          if (alert.expiry === undefined) {
             await this.alertService.update({ _id: alert._id }, { active: false });
           }
         }
