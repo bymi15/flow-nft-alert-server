@@ -23,7 +23,7 @@ alertRoutes.post(
       nftID: Joi.number().integer().min(0).empty(""),
       serialNumber: Joi.number().integer().min(0).empty(""),
       name: Joi.string().empty(""),
-      floorPrice: Joi.number().min(0),
+      price: Joi.number().min(0),
       currency: Joi.string(),
       expiry: Joi.number().empty(""),
     }),

@@ -9,7 +9,7 @@ const AlertSchema = new mongoose.Schema(
     nftID: Number,
     serialNumber: Number,
     name: String,
-    floorPrice: Number,
+    price: Number,
     currency: String,
     expiry: Number,
     active: Boolean,

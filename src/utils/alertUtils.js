@@ -16,7 +16,7 @@ export const filterAlertsByEvent = (
           } else if (alert.alertType === FLOOR_PRICE_ALERT_TYPE) {
             return (
               (alert.nftID === undefined || nftID === alert.nftID) &&
-              parseFloat(price) <= parseFloat(alert.floorPrice) &&
+              parseFloat(price) <= parseFloat(alert.price) &&
               currency === alert.currency
             );
           }
