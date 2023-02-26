@@ -13,11 +13,7 @@ export const getTopshotMetadata = async (userAddress, nftID) => {
   try {
     const script = await fcl.send([
       fcl.script(cadence),
-      fcl.args([
-        fcl.arg(userAddress, t.Address),
-        fcl.arg(nftID.toString(), t.UInt64),
-        fcl.arg(listingResourceID.toString(), t.UInt64),
-      ]),
+      fcl.args([fcl.arg(userAddress, t.Address), fcl.arg(nftID.toString(), t.UInt64)]),
     ]);
     return await fcl.decode(script);
   } catch (err) {
