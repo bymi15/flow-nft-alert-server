@@ -3,7 +3,7 @@ import { getV2ListingMetadata } from "../flow/scripts/getV2ListingMetadata";
 import Scheduler from "../jobs/scheduler";
 import AlertService from "../services/AlertService";
 import MetricService from "../services/MetricService";
-import { filterAlertsByEvent } from "../utils/alertUtils";
+import { checkAlertByNFTMetadata, filterAlertsByEvent } from "../utils/alertUtils";
 import { STOREFRONT_V2_ADDRESS, STOREFRONT_V2_CONTRACT_NAME } from "../utils/constants";
 import { getContractInfoFromType } from "../utils/flowEvents";
 import {
@@ -55,6 +55,10 @@ export default class StorefrontV2Processor {
         // Send email notification
         const currentDateTime = formatAsLongUTCDate();
         for (let alert of matchingAlerts) {
+          // Further processing of alerts
+          if (!checkAlertByNFTMetadata(alert, listingMetadata.nft)) {
+            continue;
+          }
           await this.scheduler.sendListingAlertEmail({
             email: alert.email,
             data: {
