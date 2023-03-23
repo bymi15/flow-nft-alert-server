@@ -39,7 +39,6 @@ export default class StorefrontV2FlowtyProcessor {
         const listingMetadata = await getV2FlowtyListingMetadata(
           contractName,
           event.storefrontAddress,
-          event.nftID,
           event.listingResourceID
         );
         if (!listingMetadata) {

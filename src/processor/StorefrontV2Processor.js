@@ -42,7 +42,6 @@ export default class StorefrontV2Processor {
         const listingMetadata = await getV2ListingMetadata(
           contractName,
           event.storefrontAddress,
-          event.nftID,
           event.listingResourceID
         );
         if (!listingMetadata) {
